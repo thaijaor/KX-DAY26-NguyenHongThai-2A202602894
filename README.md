@@ -30,7 +30,7 @@ Auth server và ADK web cùng dùng cổng 8000: dừng auth server trước khi
 
 ### Nộp bài
 
-Code đã kiểm tra ở máy local; ảnh bằng chứng còn cần tạo. Chưa đủ điều kiện nộp khi chưa có đủ 9 ảnh sau trong `screenshots/`:
+Đã kiểm tra các checkpoint ở máy local và có đủ 9 ảnh bằng chứng trong `screenshots/`. Hai ảnh ADK ghi nhận lời gọi MCP và dữ liệu WeatherAPI thật; dự báo đã đối chiếu đủ 3 ngày với kết quả tool. Chưa nộp VLearn.
 
 ```text
 01-function-calling.png
@@ -44,7 +44,7 @@ Code đã kiểm tra ở máy local; ảnh bằng chứng còn cần tạo. Chư
 04-adk-forecast.png
 ```
 
-Hai ảnh ADK phải có dữ liệu WeatherAPI thật. Kiểm tra ảnh và commit không chứa key, push lên repo public rồi nộp link qua VLearn. `05-cloud-run.png` chỉ cần khi làm phần tùy chọn; bản này chưa triển khai Cloud Run.
+Ảnh bước 01–03 và verify chụp trang local hiển thị nguyên văn log từ lần chạy thật ngày 14/10/2026; hai ảnh cuối chụp giao diện ADK. Người học nộp link repo public qua VLearn. `05-cloud-run.png` chỉ cần khi làm phần tùy chọn; bản này chưa triển khai Cloud Run.
 
 ---
 
