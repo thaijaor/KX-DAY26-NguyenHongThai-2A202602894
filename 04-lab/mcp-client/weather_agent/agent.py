@@ -6,6 +6,11 @@ from google.adk import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import McpToolset, StreamableHTTPConnectionParams
 import logging
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -35,14 +40,20 @@ try:
     # Create the agent with remote MCP tools
     root_agent = Agent(
         name="weather_agent",
-        model="gemini-2.5-flash",
+        model=GEMINI_MODEL,
+        instruction=(
+            "Trả lời bằng tiếng Việt. Luôn gọi tool MCP phù hợp để lấy thời tiết "
+            "hoặc dự báo thật; không tự đoán dữ liệu. Nêu thành phố, thời điểm cập nhật "
+            "cho thời tiết hiện tại, và từng ngày cùng nhiệt độ cao/thấp, xác suất mưa "
+            "cho dự báo. Nếu tool thất bại, nói rõ lỗi thay vì bịa kết quả."
+        ),
         tools=[weather_tools],
     )
     logger.info("✅ Weather agent initialized with remote MCP tools:")
     logger.info("   - get_current_weather(city)")
     logger.info("   - get_forecast(city, days)")
     logger.info("   - health_check()")
-    logger.info("🎉 Remote MCP connection successful!")
+    logger.info("MCP endpoint configured; connection verified when tools are used.")
     
 except Exception as e:
     logger.error(f"❌ Failed to connect to remote MCP server: {e}")
@@ -50,10 +61,5 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     
-    # Create a fallback agent without tools
-    logger.warning("⚠️  Creating fallback agent without MCP tools")
-    root_agent = Agent(
-        name="weather_agent",
-        model="gemini-2.5-flash",
-    )
+    raise RuntimeError("Weather agent initialization failed; MCP tools are required") from e
 

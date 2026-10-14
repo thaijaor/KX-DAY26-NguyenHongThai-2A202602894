@@ -1,5 +1,7 @@
 # Lab 04 — Weather Agent with Remote MCP Server
 
+> Cập nhật lần cuối: 2026-10-14
+
 A weather agent built with Google ADK that connects to an MCP server via Streamable HTTP transport.
 
 ## Architecture
@@ -33,7 +35,7 @@ ADK (Agent Development Kit) đóng vai trò **MCP Client**
 │     → nhận về: get_current_weather, get_forecast, health_check  │
 │                                                                 │
 │  3. TRUYỀN tools cho LLM (Gemini)                               │
-│     Agent(model="gemini-2.5-flash", tools=[weather_tools])      │
+│     Agent(model="gemini-3.5-flash-lite", tools=[weather_tools])      │
 │     → Gemini biết nó có thể gọi 3 tools trên                    │
 │                                                                 │
 │  4. ĐIỀU PHỐI vòng lặp Function Calling                         │
@@ -86,5 +88,6 @@ Open http://localhost:8000 in your browser, select `weather_agent`, and ask abou
 |----------|-------|-------------|
 | `WEATHERAPI_KEY` | mcp-server | API key from weatherapi.com |
 | `GOOGLE_API_KEY` | mcp-client/.env | Gemini API key |
+| `GEMINI_MODEL` | mcp-client/.env | Model Gemini (default: `gemini-3.5-flash-lite`) |
 | `PORT` | mcp-server (env) | Override server port (default: 8085) |
 | `MCP_SERVER_URL` | mcp-client/.env | MCP endpoint the agent connects to (default: `http://localhost:8085/mcp`; set to your Cloud Run URL + `/mcp` when deployed) |

@@ -27,7 +27,7 @@ def check_environment():
         print("   Get key from: https://aistudio.google.com/apikey")
         return False
     
-    print(f"✅ GOOGLE_API_KEY configured ({api_key[:10]}...)")
+    print("PASS: GOOGLE_API_KEY configured (value hidden)")
     return True
 
 def check_dependencies():
@@ -36,7 +36,7 @@ def check_dependencies():
     
     required_packages = [
         ("google.adk", "Google ADK"),
-        ("google.generativeai", "Google Generative AI"),
+        ("google.genai", "Google Gen AI SDK"),
         ("mcp", "MCP"),
         ("fastmcp", "FastMCP"),
         ("dotenv", "python-dotenv"),
@@ -54,7 +54,7 @@ def check_dependencies():
     
     if not all_installed:
         print("\n   Install with: uv sync")
-        print("   Or: pip install google-adk google-generativeai mcp fastmcp python-dotenv httpx")
+        print("   Or: pip install google-adk google-genai mcp fastmcp python-dotenv httpx")
     
     return all_installed
 
@@ -88,16 +88,30 @@ def check_mcp_server():
     server_url = os.getenv("MCP_SERVER_URL", "http://localhost:8085/mcp")
 
     try:
+        import asyncio
         import httpx
+        from mcp import ClientSession
+        from mcp.client.streamable_http import streamable_http_client
 
-        response = httpx.get(server_url, timeout=10.0)
-        # GET thuần lên endpoint MCP thường bị từ chối (400/405/406) vì thiếu
-        # header/session MCP — nhưng có phản hồi nghĩa là server đang chạy.
-        if response.status_code < 500:
-            print(f"✅ MCP server reachable at {server_url} (HTTP {response.status_code})")
+        async def verify():
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                async with streamable_http_client(server_url, http_client=client) as (read, write, _):
+                    async with ClientSession(read, write) as session:
+                        await session.initialize()
+                        tools = await session.list_tools()
+                        names = {tool.name for tool in tools.tools}
+                        required = {"get_current_weather", "get_forecast", "health_check"}
+                        if not required.issubset(names):
+                            raise RuntimeError("Missing required weather tools")
+                        result = await session.call_tool("health_check", {})
+                        if result.isError:
+                            raise RuntimeError("MCP health check failed")
+                        print("✅ MCP initialize + list_tools + health_check passed")
+                        print("   Tools: " + ", ".join(sorted(names)))
+                        print("   " + result.content[0].text)
             return True
-        print(f"⚠️  MCP server returned status {response.status_code}")
-        return False
+
+        return asyncio.run(verify())
 
     except Exception as e:
         print(f"❌ Cannot reach MCP server at {server_url}: {e}")

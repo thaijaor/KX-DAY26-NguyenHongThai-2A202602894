@@ -9,12 +9,17 @@ Cách chạy:
     python weather_function_calling.py
 """
 
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 from google import genai
 from google.genai import types
 
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 client = genai.Client()
 
-MODEL = "gemini-2.5-flash"
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 SYSTEM_INSTRUCTION = (
     "Bạn là trợ lý thời tiết thân thiện, trả lời bằng tiếng Việt tự nhiên. "
@@ -44,6 +49,9 @@ TOOLS = [types.Tool(function_declarations=[get_weather_declaration])]
 # 2. App tự thực thi tool (trong thực tế sẽ gọi API thời tiết thật)
 def get_weather(city: str) -> str:
     """Trả về thời tiết (mock) của *city*. Dùng làm tool cho model."""
+    aliases = {"hanoi": "Hà Nội", "ha noi": "Hà Nội", "danang": "Đà Nẵng",
+               "da nang": "Đà Nẵng", "ho chi minh": "Hồ Chí Minh"}
+    city = aliases.get(city.strip().casefold(), city)
     mock_data = {
         "Hà Nội": {
             "nhiệt_độ": "29°C",

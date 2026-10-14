@@ -1,5 +1,53 @@
 # Phân biệt MCP và Function Calling
 
+> Cập nhật lần cuối: 2026-10-14
+
+## Bài thực hành cá nhân
+
+Nguyễn Hồng Thái — `2A202602894`. Repo fork: `thaijaor/KX-DAY26-NguyenHongThai-2A202602894`.
+
+Bước 01–03 dùng dữ liệu thời tiết mô phỏng để minh họa giao thức. Lab 04 gọi WeatherAPI thật qua MCP và Google ADK. Model đọc từ `GEMINI_MODEL`, mặc định `gemini-3.5-flash-lite`.
+
+Tạo môi trường gốc bằng `uv venv` rồi `uv pip install --python .venv/Scripts/python.exe -r requirements.txt` trên Windows; macOS/Linux dùng `.venv/bin/python`. Chạy `uv sync` riêng trong `04-lab/mcp-server` và `04-lab/mcp-client` để giữ SDK MCP v1 của ADK tách khỏi SDK v2 của bước 01–03.
+
+Các file `.env` tạo từ `.env.example` tương ứng và không commit. Từ thư mục gốc, dùng `python run_lab.py <checkpoint>`; thêm `--save` để lưu output thật vào `artifacts/` (không commit).
+
+| Checkpoint | Lệnh |
+|---|---|
+| Function Calling | `python run_lab.py 01` |
+| MCP client | `python run_lab.py 02` |
+| Khởi động auth server | `python run_lab.py auth-server` |
+| Auth hợp lệ / bị từ chối | `python run_lab.py 03a-ok` / `python run_lab.py 03a-fail` |
+| Registry / versioning | `python run_lab.py 03b` / `python run_lab.py 03c` |
+| Khởi động Weather MCP | `python run_lab.py weather-server` |
+| Verify setup | `python run_lab.py 04-verify` |
+| Khởi động ADK web | `python run_lab.py adk-web` |
+| Kiểm tra ADK qua HTTP API | `python run_lab.py 04-current` / `python run_lab.py 04-forecast` |
+
+Auth server và ADK web cùng dùng cổng 8000: dừng auth server trước khi chạy ADK web. Weather MCP dùng cổng 8085. Trong ADK web tại `http://localhost:8000`, chọn `weather_agent` và chat để tạo ảnh bằng chứng giao diện.
+
+`verify_setup.py` kiểm tra MCP initialize, danh sách ba tool và gọi health check thật; không hiển thị API key. `03a-fail` kiểm tra cả token thiếu và token sai; server hiện trả HTTP 401 cho cả hai.
+
+### Nộp bài
+
+Code đã kiểm tra ở máy local; ảnh bằng chứng còn cần tạo. Chưa đủ điều kiện nộp khi chưa có đủ 9 ảnh sau trong `screenshots/`:
+
+```text
+01-function-calling.png
+02-mcp-client.png
+03a-auth-ok.png
+03a-auth-fail.png
+03b-registry.png
+03c-versioning.png
+04-verify-setup.png
+04-adk-current.png
+04-adk-forecast.png
+```
+
+Hai ảnh ADK phải có dữ liệu WeatherAPI thật. Kiểm tra ảnh và commit không chứa key, push lên repo public rồi nộp link qua VLearn. `05-cloud-run.png` chỉ cần khi làm phần tùy chọn; bản này chưa triển khai Cloud Run.
+
+---
+
 Đây là hai khái niệm hay bị nhầm lẫn nhưng thực ra ở **hai tầng khác nhau**, và **bổ sung cho nhau** chứ không thay thế.
 
 ## Cấu trúc repo

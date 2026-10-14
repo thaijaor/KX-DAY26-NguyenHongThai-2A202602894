@@ -2,6 +2,10 @@ from typing import Any
 import asyncio
 import httpx
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
 from mcp.server.fastmcp import FastMCP
 
 # Initialize FastMCP server
@@ -36,13 +40,13 @@ async def make_weather_request(endpoint: str, params: dict[str, str]) -> dict[st
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            print(f"HTTP Error {e.response.status_code}: {e.response.text}")
+            print(f"WeatherAPI HTTP Error {e.response.status_code}")
             return None
         except httpx.RequestError as e:
-            print(f"Request Error: {e}")
+            print(f"Request Error: {type(e).__name__}")
             return None
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            print(f"Unexpected error: {type(e).__name__}")
             return None
 
 @mcp.tool()
@@ -141,10 +145,7 @@ print("🔧 Available tools: get_current_weather, get_forecast, health_check")
 if __name__ == "__main__":
     import sys
     
-    is_cloud_run = bool(os.getenv("PORT"))
-    is_standalone = len(sys.argv) == 1 and sys.stdin.isatty()
-    
-    if is_cloud_run or is_standalone:
+    if "--stdio" not in sys.argv:
         print(f"🚀 Starting MCP server on http://0.0.0.0:{port}/mcp")
         mcp.run(transport="streamable-http")
     else:

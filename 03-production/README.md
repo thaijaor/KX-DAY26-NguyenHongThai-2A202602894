@@ -1,5 +1,7 @@
 # 03 — Production (Auth, Tool Registry, Versioning)
 
+> Cập nhật lần cuối: 2026-10-14
+
 `02-mcp-basics` chạy tốt trên máy cá nhân. Đưa vào production cần giải quyết thêm 3 vấn đề:
 
 | Vấn đề | Demo | Production |
@@ -51,7 +53,7 @@ Client                                Server
 
 - Token hợp lệ → truy cập tool bình thường
 - Thiếu token → `401`
-- Token sai → `403`
+- Token sai → `401` với SDK hiện đang dùng (đã kiểm tra thực tế)
 - Logic tool không biết gì về auth — SDK xử lý ở tầng transport
 
 ---

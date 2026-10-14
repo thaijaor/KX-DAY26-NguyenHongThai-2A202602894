@@ -1,5 +1,7 @@
 # Weather Agent - Google ADK with MCP Server
 
+> Cập nhật lần cuối: 2026-10-14
+
 AI agent built with **Google Agent Development Kit (ADK)** that uses tools from a local **MCP server** via Streamable HTTP transport.
 
 ## Architecture
@@ -103,7 +105,7 @@ connection_params = StreamableHTTPConnectionParams(
 
 root_agent = Agent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash-lite",
     tools=[weather_tools],
 )
 ```
@@ -123,16 +125,17 @@ root_agent = Agent(
 3. **Timeout errors**: Server not started
    - Start the MCP server first, then the ADK client
 
-### Fallback Mode
+### MCP connection required
 
-If MCP connection fails, the agent runs in fallback mode without tools.
-Fix the connection and restart ADK web.
+Initialization errors stop the agent. Runtime connectivity is checked by `verify_setup.py` and real tool calls.
 
 ## Environment Variables
 
 Create `.env` file:
 ```bash
 GOOGLE_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.5-flash-lite
+MCP_SERVER_URL=http://localhost:8085/mcp
 ```
 
 ## Resources
